@@ -1,8 +1,9 @@
 (function(window){
+  'use strict';
   
   var button  = document.getElementById('button');
   
-  button.addEventListener('click', function () {
+  button.addEventListener('tap', function () {
     alert('haha');
   });
 
