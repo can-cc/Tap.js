@@ -7,8 +7,9 @@
   var utils = {};
 
   Tap.options = {
-    eventName: 'tap'
-  }
+    eventName: 'tap',
+    fingerMaxOffset: 11
+  };
 
   utils.createEvent = function(name) {
     if (document.createEvent) {
@@ -42,19 +43,53 @@
   };
 
   var eventMat = [{
-
+    //touchable devices
+    test: ('propertyIsEnumerable' in window ||
+           'hasOwnProperty' in document) && 
+          (window.propertyIsEnumerable('ontouchstart') ||
+           document.hasOwnProperty('ontouchstart')),  
+    events: {
+        start: 'touchstart',
+        move: 'touchmove',
+        end: 'touchend'
+      }
+  }, {
+    //modern device agnostic web
+    test: window.navigator.pointerEnabled,
+    events: {
+      start: 'pointerDown',
+      move: 'pointermove',
+      end: 'pointerup'
+    }
   }];
 
 
   var handler = {
 
+    //fire tap event and prevent click event(init fn will fake click event to this)
     tap: function(e) {
       utils.fireEvent(e, Tap.options.eventName);
       return e.preventDefault();
+    },
+
+    click: function() {
+      //for unsuportted tap env
+      if(!utils.fireEvent(e, Tap.options.eventName)) {
+        return e.preventDefault();
+      }
+
     }
+
   };
 
   var init = function() {
+    for (var i = 0, i < eventMat.length ; i++) {
+      if (eventMat[i].test) {
+        touchEvents = eventMatrix[i].events;
+
+        utils.bindTouchEvent(touchEvents);
+      }
+    }
     return utils.attachEvent(document.documentElement, 'click', handler['tap']);
   };
 
