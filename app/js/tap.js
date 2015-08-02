@@ -42,6 +42,10 @@
     return e;
   };
 
+  utils.bindTouchEvent = function(evens) {
+      
+  }
+
   var eventMat = [{
     //touchable devices
     test: ('propertyIsEnumerable' in window ||
